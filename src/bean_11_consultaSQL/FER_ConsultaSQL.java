@@ -43,6 +43,7 @@ public class FER_ConsultaSQL implements Serializable {
     public boolean hayError=false;
     public String mensajeError;
     
+    private boolean abiertaInicial=false;
     
     
     public FER_ConsultaSQL()
@@ -74,10 +75,21 @@ public class FER_ConsultaSQL implements Serializable {
         if ( this.miFER_ConectorBD != null)  this.miFER_ConectorBD.removePropertyChangeListener(this.miEscuhadorDeConectada);
         
         
-        this.miFER_ConectorBD=AA_FER_ConectorBD;
         
-        if (this.miFER_ConectorBD!=null) // para cuando en el editor de propiedades pone <Ninguna> nos llegaría un null
-                 this.miFER_ConectorBD.addPropertyChangeListener(this.miEscuhadorDeConectada);    // decirle a conectorBD que yo estoy pendiente de lo que le pasa.   
+        
+                if (this.miFER_ConectorBD!=null) // para cuando en el editor de propiedades pone <Ninguna> nos llegaría un null
+          {
+            this.miFER_ConectorBD.addPropertyChangeListener(this.miEscuhadorDeConectada);         // decirle a conectorBD que yo estoy pendiente de lo que le pasa.   
+            if ( this.abiertaInicial) 
+            {
+                        this.setAA_abierta(true);
+                        this.abiertaInicial=false;
+
+            }
+                    
+        } 
+        
+    
     }
  
        // ver que pasa cuando cambia el estado de conectada/no conectada a la base de datos el conector FER_ConectorDB 
@@ -137,7 +149,8 @@ public class FER_ConsultaSQL implements Serializable {
                             this.mensajeError= "*Error FER_ConsultaSQL: \nNo tiene asignado un objeto AA_FER_ConectorBD";
                             JOptionPane.showMessageDialog (null,this.mensajeError);
                             this.propertySupport.firePropertyChange(CONSTANTES.CONSULTA_SQL_ABIERTA, this.miAA_abierta,false); // avisar que la propiedad miAA_abierta ha cambiado.
-                            this.miAA_abierta=false;    
+                            this.miAA_abierta=false;
+                            this.abiertaInicial=true;
                             return false;
                         }
          if ( !this.miFER_ConectorBD.isAA_Conectada()) // que la base de datos este conectada
